@@ -18,7 +18,11 @@ namespace VectorPerf
         public float W;
         public static MyVec Normalize(MyVec v)
         {
-            var s = 1.0f / MathF.Sqrt (v.X * v.X + v.Y * v.Y + v.Z * v.Z);
+#if NO_MATHF
+            var s = 1.0f / (float)Math.Sqrt(v.X * v.X + v.Y * v.Y + v.Z * v.Z + v.W * v.W);
+#else
+            var s = 1.0f / MathF.Sqrt (v.X * v.X + v.Y * v.Y + v.Z * v.Z + v.W * v.W);
+#endif
             return new MyVec
             {
                 X = v.X * s,
@@ -316,7 +320,11 @@ namespace VectorPerf
             for (var i = 0; i < ArraySize; i++)
             {
                 var v = vtX[i];
+#if NO_MATHF
+                var x = 1.0f / (float)Math.Sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2] + v[3] * v[3]);
+#else
                 var x = 1.0f / MathF.Sqrt (v[0] * v[0] + v[1] * v[1] + v[2] * v[2] + v[3] * v[3]);
+#endif
                 vtY[i] = v * x;
             }
         }
@@ -380,7 +388,8 @@ namespace VectorPerf
 
         public static void Run()
         {
-            Console.WriteLine($"Vector<T> has {Vector<float>.Count} floats, or {Vector<double>.Count} doubles, or {Vector<int>.Count} ints");
+            //Console.WriteLine($"Vector<T> has {Vector<float>.Count} floats, or {Vector<double>.Count} doubles, or {Vector<int>.Count} ints");
+
             Console.WriteLine("==");
             RunTest("    MyVecScale", MyVecScale);
             RunTest("TKVector4Scale", TKVector4Scale);
